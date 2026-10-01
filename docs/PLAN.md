@@ -28,7 +28,7 @@ The system must understand the document and read the important information aloud
 
 The core rule is:
 
-## NOTHING LEAVES THE DEVICE.
+> **NOTHING LEAVES THE DEVICE.**
 
 The application must continue to function when Wi-Fi and mobile data are completely disabled.
 
@@ -471,11 +471,11 @@ Test malformed and blurry images.
 
 For medication/prescription documents, the system must distinguish between:
 
-## WHAT THE DOCUMENT SAYS
+**WHAT THE DOCUMENT SAYS**
 
 and
 
-## MEDICAL ADVICE.
+**MEDICAL ADVICE.**
 
 It may read:
 
