@@ -19,6 +19,21 @@ from typing import Any
 from ml.classifier.engine import DocumentType
 
 
+# Matches either a numeric date (15/03/1985, 15-03-1985, 15.03.1985)
+# or a written date (31 January 2027, 1st October 2026, Jan 31, 2027).
+DATE_PATTERN = (
+    r'(?:'
+    r'\d{1,2}[\/\-\.]\d{1,2}[\/\-\.]\d{2,4}'
+    r'|'
+    r'\d{1,2}(?:st|nd|rd|th)?\s+(?:January|February|March|April|May|June|July|'
+    r'August|September|October|November|December)\s+\d{2,4}'
+    r'|'
+    r'(?:January|February|March|April|May|June|July|August|September|October|'
+    r'November|December)\s+\d{1,2}(?:st|nd|rd|th)?,?\s+\d{2,4}'
+    r')'
+)
+
+
 class ExtractionMode(Enum):
     """Extraction mode based on document type."""
     PRESCRIPTION = "prescription"
@@ -244,12 +259,12 @@ class DocumentExtractor:
 
         # Dates
         for line in lines:
-            date_match = re.search(r'(\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4})', line)
+            date_match = re.search(DATE_PATTERN, line)
             if date_match:
                 if re.search(r'due|payment|deadline', line, re.IGNORECASE):
-                    deadlines.append(("Payment Date", date_match.group(1)))
+                    deadlines.append(("Payment Date", date_match.group(0)))
                 elif re.search(r'statement|period|from|to', line, re.IGNORECASE):
-                    deadlines.append(("Statement Date", date_match.group(1)))
+                    deadlines.append(("Statement Date", date_match.group(0)))
 
         # Action required
         action = self._find_line_containing(lines, [
@@ -313,7 +328,7 @@ class DocumentExtractor:
 
         # Due date
         due_date = self._find_first(text, [
-            r'(?:due\s+date|payment\s+due|pay\s+by)[:\s]*(\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4})',
+            r'(?:due\s+date|payment\s+due|pay\s+by)[:\s]*(' + DATE_PATTERN + r')',
         ])
         if due_date:
             deadlines.append(("Due Date", due_date.strip()))
@@ -378,8 +393,8 @@ class DocumentExtractor:
 
         # Organization
         org = self._find_first(text, [
-            r'(?:HM\s+Revenue|HMRC|DWP|NHS|Home\s+Office|DVLA|Council|Department\s+for|Ministry\s+of)\s+[A-Za-z\s&]+',
-            r'^([A-Z][A-Za-z\s&.,\()]{5,50})$',
+            r'(?:HM\s+Revenue|HMRC|DWP|NHS|Home\s+Office|DVLA|Council|Department\s+for|Ministry\s+of)[ ]+[A-Za-z &]+',
+            r'^([A-Z][A-Za-z &.,()]{5,50})$',
         ])
         if org:
             fields.append(ExtractedField(label="From", value=org.strip()))
@@ -391,14 +406,28 @@ class DocumentExtractor:
         if subject:
             fields.append(ExtractedField(label="Subject", value=subject.strip()))
 
-        # Dates
+        # Dates — line-local first
         for line in lines:
-            date_match = re.search(r'(\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4})', line)
+            date_match = re.search(DATE_PATTERN, line)
             if date_match:
                 if re.search(r'deadline|by|before|due|respond|reply', line, re.IGNORECASE):
-                    deadlines.append(("Deadline", date_match.group(1)))
+                    deadlines.append(("Deadline", date_match.group(0)))
                 elif re.search(r'hearing|court|appointment|interview', line, re.IGNORECASE):
-                    deadlines.append(("Date", date_match.group(1)))
+                    deadlines.append(("Date", date_match.group(0)))
+
+        # Dates — proximity search across the whole text, since the keyword
+        # ("deadline is") and the date often fall on different lines.
+        if not deadlines:
+            for kw_match in re.finditer(
+                r'deadline|due\s+by|must\s+(?:be\s+)?(?:submitted|paid|respond)|'
+                r'before|no\s+later\s+than|respond\s+by|expires?',
+                text, re.IGNORECASE,
+            ):
+                window = text[kw_match.start(): kw_match.start() + 160]
+                dm = re.search(DATE_PATTERN, window)
+                if dm:
+                    deadlines.append(("Deadline", dm.group(0)))
+                    break
 
         # Action required
         action = self._find_line_containing(lines, [
@@ -454,7 +483,7 @@ class DocumentExtractor:
 
         # DOB
         dob = self._find_first(text, [
-            r'(?:Date\s+of\s+Birth|DOB|Born)[:\s]*(\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4})',
+            r'(?:Date\s+of\s+Birth|DOB|Born)[:\s]*(' + DATE_PATTERN + r')',
         ])
         if dob:
             fields.append(ExtractedField(label="Date of Birth", value=dob.strip()))
@@ -475,7 +504,7 @@ class DocumentExtractor:
 
         # Expiry
         expiry = self._find_first(text, [
-            r'(?:Expir\w+|Valid\s+Until)[:\s]*(\d{1,2}[/\-\.]\d{1,2}[/\-\.]\d{2,4})',
+            r'(?:Expir\w+|Valid\s+Until)[:\s]*(' + DATE_PATTERN + r')',
         ])
         if expiry:
             fields.append(ExtractedField(label="Expiry Date", value=expiry.strip()))
@@ -522,10 +551,16 @@ class DocumentExtractor:
         return None
 
     def _find_line_containing(self, lines: list[str], keywords: list[str]) -> str | None:
-        """Find first line containing any of the keywords."""
+        """
+        Find the first line containing any of the keywords.
+
+        Matching uses word boundaries so short keywords do not fire on
+        unrelated substrings (e.g. "action" must not match "Transactions").
+        """
+        compiled = [re.compile(r"\b" + re.escape(k) + r"\b", re.IGNORECASE) for k in keywords]
         for line in lines:
-            for keyword in keywords:
-                if keyword.lower() in line.lower():
+            for pattern in compiled:
+                if pattern.search(line):
                     return line.strip()
         return None
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Private Sight</string>
+    <string name="privacy_title">Privacy Mode</string>
+    <string name="developer_title">Developer Status</string>
+
+    <!-- Home / camera -->
+    <string name="screen_intro">Private Sight. Tap Scan Document to read a document aloud. Everything is processed on this device.</string>
+    <string name="privacy_banner_speech">100 percent on-device processing. No image or document text is uploaded.</string>
+    <string name="camera_preview_desc">Camera preview for scanning a document</string>
+    <string name="camera_permission_denied">Camera permission is required to scan documents.</string>
+    <string name="camera_start_failed">Could not start the camera.</string>
+    <string name="scan_document">Scan Document</string>
+    <string name="privacy_mode">Privacy Mode</string>
+    <string name="developer_status">Developer Status</string>
+
+    <!-- Guidance -->
+    <string name="guidance_starting">Point the camera at the document. I will guide you.</string>
+    <string name="document_ready">Document captured.</string>
+    <string name="capturing">Capturing.</string>
+    <string name="capture_failed">Capture failed. Please try again.</string>
+    <string name="analysing">Reading the document on this device.</string>
+
+    <!-- Results -->
+    <string name="result_ready">Results ready.</string>
+    <string name="result_what_is">What is this document?</string>
+    <string name="result_summary">Summary</string>
+    <string name="result_sensitive">Sensitive Information</string>
+    <string name="result_fields">Important Fields</string>
+    <string name="result_warnings">Warnings</string>
+    <string name="no_fields">No fields extracted.</string>
+
+    <!-- Actions -->
+    <string name="read_summary">Read Summary</string>
+    <string name="read_full">Read Full Document</string>
+    <string name="ask_question">Ask Question</string>
+    <string name="ask">Ask</string>
+    <string name="ask_voice">Speak Question</string>
+    <string name="question_hint">Ask about this document</string>
+    <string name="scan_again">Scan Again</string>
+    <string name="delete_document">Delete Current Document</string>
+    <string name="document_deleted">Document deleted.</string>
+
+    <!-- Quick questions -->
+    <string name="q_what_is">What is this document?</string>
+    <string name="q_action">What do I need to do?</string>
+    <string name="q_deadline">When is the deadline?</string>
+    <string name="q_amount">How much do I owe?</string>
+
+    <!-- Privacy screen -->
+    <string name="privacy_1">100% ON-DEVICE PROCESSING</string>
+    <string name="privacy_2">No image or document text is uploaded.</string>
+    <string name="privacy_3">No account required.</string>
+    <string name="privacy_4">No cloud processing.</string>
+    <string name="privacy_technical">How this is enforced</string>
+    <string name="privacy_technical_detail">This app does not request the INTERNET permission, so the operating system prevents any network connection. Those permissions are never added. A strict network security policy blocks cleartext traffic even if a permission were added by mistake.</string>
+    <string name="delete_all">Delete ALL session data</string>
+
+    <!-- Developer screen -->
+    <string name="dev_network">NETWORK REQUESTS</string>
+    <string name="dev_location">PROCESSING LOCATION</string>
+    <string name="dev_model">MODEL</string>
+    <string name="dev_privacy">PRIVACY STATUS</string>
+    <string name="dev_internet_perm">INTERNET PERMISSION</string>
+    <string name="dev_cleartext">CLEARTEXT TRAFFIC</string>
+    <string name="dev_explanation">Why this is true</string>
+    <string name="dev_explanation_text">The absence of the INTERNET permission means the process cannot open a socket. Models are bundled in the APK under assets/models and loaded locally. Speech output uses the on-device TextToSpeech engine.</string>
+</resources>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Private Sight — Local Testing UI</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header role="banner">
+  <h1>Private Sight</h1>
+  <p class="tagline">Privacy-first offline document reader — local testing UI</p>
+  <div class="privacy-banner" role="status" aria-live="polite">
+    <span class="lock" aria-hidden="true">🔒</span>
+    <strong>100% ON-DEVICE PROCESSING</strong>
+    <span class="privacy-sub">No image or document text is uploaded. No account required. No cloud processing.</span>
+  </div>
+</header>
+
+<main id="main" role="main">
+
+  <section class="card" aria-labelledby="scan-heading">
+    <h2 id="scan-heading">1. Scan a document</h2>
+
+    <div class="controls">
+      <label class="big-button" for="file-input">📷 Choose document image</label>
+      <input id="file-input" type="file" accept="image/*" capture="environment">
+
+      <button id="demo-btn" class="big-button secondary" type="button">🧪 Load demo prescription</button>
+      <button id="demo-bank-btn" class="big-button secondary" type="button">🧪 Load demo bank</button>
+      <button id="demo-gov-btn" class="big-button secondary" type="button">🧪 Load demo letter</button>
+    </div>
+
+    <div class="preview-wrap" id="preview-wrap" hidden>
+      <img id="preview" alt="Selected document preview" />
+    </div>
+
+    <div class="controls">
+      <button id="scan-btn" class="big-button primary" type="button" disabled>🔍 Analyse document</button>
+    </div>
+
+    <p id="scan-status" class="status" role="status" aria-live="polite"></p>
+  </section>
+
+  <section class="card" id="results-card" aria-labelledby="results-heading" hidden>
+    <h2 id="results-heading">2. Results</h2>
+
+    <div class="result-block">
+      <h3>What is this document?</h3>
+      <p id="r-doctype" class="big-result"></p>
+      <p id="r-confidence" class="meta"></p>
+    </div>
+
+    <div class="result-block">
+      <h3>Summary</h3>
+      <p id="r-summary" class="big-result"></p>
+      <div class="controls">
+        <button id="read-summary-btn" class="big-button secondary" type="button">🔊 Read summary aloud</button>
+      </div>
+    </div>
+
+    <div class="result-block">
+      <h3>Sensitive information</h3>
+      <p id="r-sensitive" class="big-result"></p>
+      <ul id="r-entities" class="entity-list"></ul>
+    </div>
+
+    <div class="result-block">
+      <h3>Important fields</h3>
+      <dl id="r-fields" class="field-list"></dl>
+      <p id="r-action" class="action-line"></p>
+    </div>
+
+    <div class="result-block">
+      <h3>Warnings</h3>
+      <ul id="r-warnings" class="warning-list"></ul>
+    </div>
+
+    <div class="controls">
+      <button id="fulltext-btn" class="big-button secondary" type="button">📄 Read full document</button>
+      <button id="ask-toggle-btn" class="big-button secondary" type="button">❓ Ask a question</button>
+      <button id="delete-btn" class="big-button danger" type="button">🗑 Delete current document</button>
+      <button id="scan-again-btn" class="big-button" type="button">↻ Scan again</button>
+    </div>
+
+    <div id="fulltext-wrap" hidden>
+      <h3>Full OCR text</h3>
+      <pre id="r-fulltext" class="fulltext"></pre>
+      <div class="controls">
+        <button id="read-full-btn" class="big-button secondary" type="button">🔊 Read full document aloud</button>
+      </div>
+    </div>
+
+    <div id="ask-wrap" hidden>
+      <h3>Ask about this document</h3>
+      <div class="controls ask-controls">
+        <input id="question-input" type="text" class="question-input"
+               placeholder="e.g. How many tablets should I take?"
+               aria-label="Your question about the document">
+        <button id="ask-btn" class="big-button primary" type="button">Ask</button>
+      </div>
+      <div class="controls quick-questions">
+        <button class="chip" type="button" data-q="What is this document?">What is this?</button>
+        <button class="chip" type="button" data-q="What do I need to do?">What do I need to do?</button>
+        <button class="chip" type="button" data-q="When is the deadline?">When is the deadline?</button>
+        <button class="chip" type="button" data-q="How much do I owe?">How much do I owe?</button>
+        <button class="chip" type="button" data-q="Who sent this?">Who sent this?</button>
+      </div>
+      <p id="r-answer" class="big-result" role="status" aria-live="polite"></p>
+      <div class="controls">
+        <button id="read-answer-btn" class="big-button secondary" type="button" hidden>🔊 Read answer aloud</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="dev-card" aria-labelledby="dev-heading">
+    <h2 id="dev-heading">Developer / privacy status</h2>
+    <dl class="status-grid">
+      <dt>NETWORK REQUESTS</dt><dd id="s-net">0</dd>
+      <dt>PROCESSING LOCATION</dt><dd id="s-loc">DEVICE</dd>
+      <dt>MODEL</dt><dd id="s-model">LOCAL</dd>
+      <dt>PRIVACY STATUS</dt><dd id="s-privacy">PROTECTED</dd>
+      <dt>DOCUMENTS IN SESSION</dt><dd id="s-docs">0</dd>
+      <dt>TTS ENGINE</dt><dd id="s-tts">—</dd>
+    </dl>
+    <div class="controls">
+      <button id="delete-all-btn" class="big-button danger" type="button">🗑 Delete ALL session data</button>
+      <button id="refresh-status-btn" class="big-button secondary" type="button">↻ Refresh status</button>
+    </div>
+  </section>
+
+</main>
+
+<footer role="contentinfo">
+  <p>Private Sight · Imperial College Hackathon 2026 · Runs entirely on this device</p>
+</footer>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

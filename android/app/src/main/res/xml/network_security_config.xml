@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Deny all network traffic at the platform level.
+  Combined with the absence of the INTERNET permission, this makes any
+  accidental network call impossible rather than merely discouraged.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">*</domain>
+    </domain-config>
+</network-security-config>
