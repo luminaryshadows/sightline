@@ -1,0 +1,21 @@
+[project]
+name = "private-sight"
+version = "0.1.0"
+description = "Privacy-first offline AI visual assistant for visually impaired users"
+requires-python = ">=3.11"
+dependencies = [
+    "torch>=2.0",
+    "torchvision>=0.15",
+    "easyocr>=1.7",
+    "opencv-python-headless>=4.8",
+    "Pillow>=10.0",
+    "numpy>=1.24",
+    "scikit-image>=0.21",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-cov", "black", "ruff"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

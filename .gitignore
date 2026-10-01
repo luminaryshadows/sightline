@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Local ML model weights — large binaries, fetched by scripts/fetch_models.py
+models/*.pth
+models/*.pt
+models/*.pte
+models/*.onnx
+models/*.tflite
+*.pth
+*.pte
+
+# OS
+.DS_Store
+
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+*.apk
+*.aab
